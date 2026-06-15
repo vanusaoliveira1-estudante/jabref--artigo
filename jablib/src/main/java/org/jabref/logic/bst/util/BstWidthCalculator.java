@@ -1,7 +1,6 @@
 package org.jabref.logic.bst.util;
 
 import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +16,13 @@ public class BstWidthCalculator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BstWidthCalculator.class);
 
+    // Named constants for special character combination widths
+    private static final int WIDTH_OE_LOWER = 778;
+    private static final int WIDTH_OE_UPPER = 1014;
+    private static final int WIDTH_AE_LOWER = 722;
+    private static final int WIDTH_AE_UPPER = 903;
+    private static final int WIDTH_SS_LOWER = 500;
+
     /*
      * Quoted from Bibtex:
      *
@@ -26,113 +32,23 @@ public class BstWidthCalculator {
      * and represent hundredths of a point (rounded), but since they're used
      * only for relative comparisons, the units have no meaning.
      */
-
-    private static int @Nullable [] widths;
-
-    static {
-        if (BstWidthCalculator.widths == null) {
-            BstWidthCalculator.widths = new int[128];
-
-            for (int i = 0; i < 128; i++) {
-                BstWidthCalculator.widths[i] = 0;
-            }
-            BstWidthCalculator.widths[32] = 278;
-            BstWidthCalculator.widths[33] = 278;
-            BstWidthCalculator.widths[34] = 500;
-            BstWidthCalculator.widths[35] = 833;
-            BstWidthCalculator.widths[36] = 500;
-            BstWidthCalculator.widths[37] = 833;
-            BstWidthCalculator.widths[38] = 778;
-            BstWidthCalculator.widths[39] = 278;
-            BstWidthCalculator.widths[40] = 389;
-            BstWidthCalculator.widths[41] = 389;
-            BstWidthCalculator.widths[42] = 500;
-            BstWidthCalculator.widths[43] = 778;
-            BstWidthCalculator.widths[44] = 278;
-            BstWidthCalculator.widths[45] = 333;
-            BstWidthCalculator.widths[46] = 278;
-            BstWidthCalculator.widths[47] = 500;
-            BstWidthCalculator.widths[48] = 500;
-            BstWidthCalculator.widths[49] = 500;
-            BstWidthCalculator.widths[50] = 500;
-            BstWidthCalculator.widths[51] = 500;
-            BstWidthCalculator.widths[52] = 500;
-            BstWidthCalculator.widths[53] = 500;
-            BstWidthCalculator.widths[54] = 500;
-            BstWidthCalculator.widths[55] = 500;
-            BstWidthCalculator.widths[56] = 500;
-            BstWidthCalculator.widths[57] = 500;
-            BstWidthCalculator.widths[58] = 278;
-            BstWidthCalculator.widths[59] = 278;
-            BstWidthCalculator.widths[60] = 278;
-            BstWidthCalculator.widths[61] = 778;
-            BstWidthCalculator.widths[62] = 472;
-            BstWidthCalculator.widths[63] = 472;
-            BstWidthCalculator.widths[64] = 778;
-            BstWidthCalculator.widths[65] = 750;
-            BstWidthCalculator.widths[66] = 708;
-            BstWidthCalculator.widths[67] = 722;
-            BstWidthCalculator.widths[68] = 764;
-            BstWidthCalculator.widths[69] = 681;
-            BstWidthCalculator.widths[70] = 653;
-            BstWidthCalculator.widths[71] = 785;
-            BstWidthCalculator.widths[72] = 750;
-            BstWidthCalculator.widths[73] = 361;
-            BstWidthCalculator.widths[74] = 514;
-            BstWidthCalculator.widths[75] = 778;
-            BstWidthCalculator.widths[76] = 625;
-            BstWidthCalculator.widths[77] = 917;
-            BstWidthCalculator.widths[78] = 750;
-            BstWidthCalculator.widths[79] = 778;
-            BstWidthCalculator.widths[80] = 681;
-            BstWidthCalculator.widths[81] = 778;
-            BstWidthCalculator.widths[82] = 736;
-            BstWidthCalculator.widths[83] = 556;
-            BstWidthCalculator.widths[84] = 722;
-            BstWidthCalculator.widths[85] = 750;
-            BstWidthCalculator.widths[86] = 750;
-            BstWidthCalculator.widths[87] = 1028;
-            BstWidthCalculator.widths[88] = 750;
-            BstWidthCalculator.widths[89] = 750;
-            BstWidthCalculator.widths[90] = 611;
-            BstWidthCalculator.widths[91] = 278;
-            BstWidthCalculator.widths[92] = 500;
-            BstWidthCalculator.widths[93] = 278;
-            BstWidthCalculator.widths[94] = 500;
-            BstWidthCalculator.widths[95] = 278;
-            BstWidthCalculator.widths[96] = 278;
-            BstWidthCalculator.widths[97] = 500;
-            BstWidthCalculator.widths[98] = 556;
-            BstWidthCalculator.widths[99] = 444;
-            BstWidthCalculator.widths[100] = 556;
-            BstWidthCalculator.widths[101] = 444;
-            BstWidthCalculator.widths[102] = 306;
-            BstWidthCalculator.widths[103] = 500;
-            BstWidthCalculator.widths[104] = 556;
-            BstWidthCalculator.widths[105] = 278;
-            BstWidthCalculator.widths[106] = 306;
-            BstWidthCalculator.widths[107] = 528;
-            BstWidthCalculator.widths[108] = 278;
-            BstWidthCalculator.widths[109] = 833;
-            BstWidthCalculator.widths[110] = 556;
-            BstWidthCalculator.widths[111] = 500;
-            BstWidthCalculator.widths[112] = 556;
-            BstWidthCalculator.widths[113] = 528;
-            BstWidthCalculator.widths[114] = 392;
-            BstWidthCalculator.widths[115] = 394;
-            BstWidthCalculator.widths[116] = 389;
-            BstWidthCalculator.widths[117] = 556;
-            BstWidthCalculator.widths[118] = 528;
-            BstWidthCalculator.widths[119] = 722;
-            BstWidthCalculator.widths[120] = 528;
-            BstWidthCalculator.widths[121] = 528;
-            BstWidthCalculator.widths[122] = 444;
-            BstWidthCalculator.widths[123] = 500;
-            BstWidthCalculator.widths[124] = 1000;
-            BstWidthCalculator.widths[125] = 500;
-            BstWidthCalculator.widths[126] = 500;
-        }
-    }
+    private static final int[] CHAR_WIDTHS = {
+            // 0-31: Control characters
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            // 32-47: space ! " # $ % & ' ( ) * + , - . /
+            278, 278, 500, 833, 500, 833, 778, 278, 389, 389, 500, 778, 278, 333, 278, 500,
+            // 48-63: 0 1 2 3 4 5 6 7 8 9 : ; < = > ?
+            500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 278, 278, 278, 778, 472, 472,
+            // 64-79: @ A B C D E F G H I J K L M N O
+            778, 750, 708, 722, 764, 681, 653, 785, 750, 361, 514, 778, 625, 917, 750, 778,
+            // 80-95: P Q R S T U V W X Y Z [ \ ] ^ _
+            681, 778, 736, 556, 722, 750, 750, 1028, 750, 750, 611, 278, 500, 278, 500, 278,
+            // 96-111: ` a b c d e f g h i j k l m n o
+            278, 500, 556, 444, 556, 444, 306, 500, 556, 278, 306, 528, 278, 833, 556, 500,
+            // 112-127: p q r s t u v w x y z { | } ~ DEL
+            556, 528, 392, 394, 389, 556, 528, 722, 528, 528, 444, 500, 1000, 500, 500, 0
+    };
 
     private BstWidthCalculator() {
     }
@@ -140,27 +56,27 @@ public class BstWidthCalculator {
     private static int getSpecialCharWidth(char[] c, int pos) {
         if ((pos + 1) < c.length) {
             if ((c[pos] == 'o') && (c[pos + 1] == 'e')) {
-                return 778;
+                return WIDTH_OE_LOWER;
             }
             if ((c[pos] == 'O') && (c[pos + 1] == 'E')) {
-                return 1014;
+                return WIDTH_OE_UPPER;
             }
             if ((c[pos] == 'a') && (c[pos + 1] == 'e')) {
-                return 722;
+                return WIDTH_AE_LOWER;
             }
             if ((c[pos] == 'A') && (c[pos + 1] == 'E')) {
-                return 903;
+                return WIDTH_AE_UPPER;
             }
             if ((c[pos] == 's') && (c[pos + 1] == 's')) {
-                return 500;
+                return WIDTH_SS_LOWER;
             }
         }
-        return BstWidthCalculator.getCharWidth(c[pos]);
+        return getCharWidth(c[pos]);
     }
 
     public static int getCharWidth(char c) {
-        if (BstWidthCalculator.widths != null && (c >= 0) && (c < 128)) {
-            return BstWidthCalculator.widths[c];
+        if ((c >= 0) && (c < 128)) {
+            return CHAR_WIDTHS[c];
         } else {
             return 0;
         }
@@ -204,7 +120,7 @@ public class BstWidthCalculator {
                             i++; // Skip non-alpha control seq
                         } else {
                             if (BstCaseChanger.findSpecialChar(c, afterBackslash).isPresent()) {
-                                result += BstWidthCalculator.getSpecialCharWidth(c, afterBackslash);
+                                result += getSpecialCharWidth(c, afterBackslash);
                             }
                         }
                         while ((i < n) && Character.isWhitespace(c[i])) {
@@ -216,7 +132,7 @@ public class BstWidthCalculator {
                             } else if (c[i] == '{') {
                                 braceLevel++;
                             } else {
-                                result += BstWidthCalculator.getCharWidth(c[i]);
+                                result += getCharWidth(c[i]);
                             }
                             i++;
                         }
@@ -230,7 +146,7 @@ public class BstWidthCalculator {
                     LOGGER.warn("Too many closing braces in string: {}", toMeasure);
                 }
             }
-            result += BstWidthCalculator.getCharWidth(c[i]);
+            result += getCharWidth(c[i]);
             i++;
         }
         if (braceLevel > 0) {

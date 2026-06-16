@@ -33,42 +33,40 @@ class MSBibEntry {
     /// tested using http://www.regexpal.com/
     private static final Pattern ADDRESS_PATTERN = Pattern.compile("\\b(\\w+)\\s?[,]?\\s?(\\w*)\\s?[,]?\\s?(\\w*)\\b");
 
-    public Map<String, String> fields = new HashMap<>();
+    private Map<String, String> fields = new HashMap<>();
 
-    public List<MsBibAuthor> authors;
-    public List<MsBibAuthor> bookAuthors;
-    public List<MsBibAuthor> editors;
-    public List<MsBibAuthor> translators;
-    public List<MsBibAuthor> producerNames;
-    public List<MsBibAuthor> composers;
-    public List<MsBibAuthor> conductors;
-    public List<MsBibAuthor> performers;
-    public List<MsBibAuthor> writers;
-    public List<MsBibAuthor> directors;
-    public List<MsBibAuthor> compilers;
-    public List<MsBibAuthor> interviewers;
-    public List<MsBibAuthor> interviewees;
-    public List<MsBibAuthor> inventors;
+    private List<MsBibAuthor> authors;
+    private List<MsBibAuthor> bookAuthors;
+    private List<MsBibAuthor> editors;
+    private List<MsBibAuthor> translators;
+    private List<MsBibAuthor> producerNames;
+    private List<MsBibAuthor> composers;
+    private List<MsBibAuthor> conductors;
+    private List<MsBibAuthor> performers;
+    private List<MsBibAuthor> writers;
+    private List<MsBibAuthor> directors;
+    private List<MsBibAuthor> compilers;
+    private List<MsBibAuthor> interviewers;
+    private List<MsBibAuthor> interviewees;
+    private List<MsBibAuthor> inventors;
+    private List<MsBibAuthor> counsels;
 
-    public List<MsBibAuthor> counsels;
-
-    public PageNumbers pages;
-    public String standardNumber;
-    public String address;
-    public String conferenceName;
-    public String thesisType;
-    public String internetSiteTitle;
-    public String dateAccessed;
-    public String publicationTitle;
-    public String albumTitle;
-    public String broadcastTitle;
-    public String year;
-    public String month;
-    public String day;
-    public String number;
-    public String patentNumber;
-
-    public String journalName;
+    private PageNumbers pages;
+    private String standardNumber;
+    private String address;
+    private String conferenceName;
+    private String thesisType;
+    private String internetSiteTitle;
+    private String dateAccessed;
+    private String publicationTitle;
+    private String albumTitle;
+    private String broadcastTitle;
+    private String year;
+    private String month;
+    private String day;
+    private String number;
+    private String patentNumber;
+    private String journalName;
 
     private String bibtexEntryType;
 
@@ -353,5 +351,263 @@ class MSBibEntry {
         } else {
             addField(document, parent, "City", addressToSplit);
         }
+    }
+
+    // --- GETTERS AND SETTERS FOR ENCAPSULATION ---
+
+    public Map<String, String> getFields() {
+        return java.util.Collections.unmodifiableMap(fields);
+    }
+
+    public void putField(String key, String value) {
+        this.fields.put(key, value);
+    }
+
+    public List<MsBibAuthor> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(List<MsBibAuthor> authors) {
+        this.authors = authors;
+    }
+
+    public List<MsBibAuthor> getBookAuthors() {
+        return bookAuthors;
+    }
+
+    public void setBookAuthors(List<MsBibAuthor> bookAuthors) {
+        this.bookAuthors = bookAuthors;
+    }
+
+    public List<MsBibAuthor> getEditors() {
+        return editors;
+    }
+
+    public void setEditors(List<MsBibAuthor> editors) {
+        this.editors = editors;
+    }
+
+    public List<MsBibAuthor> getTranslators() {
+        return translators;
+    }
+
+    public void setTranslators(List<MsBibAuthor> translators) {
+        this.translators = translators;
+    }
+
+    public List<MsBibAuthor> getProducerNames() {
+        return producerNames;
+    }
+
+    public void setProducerNames(List<MsBibAuthor> producerNames) {
+        this.producerNames = producerNames;
+    }
+
+    public List<MsBibAuthor> getComposers() {
+        return composers;
+    }
+
+    public void setComposers(List<MsBibAuthor> composers) {
+        this.composers = composers;
+    }
+
+    public List<MsBibAuthor> getConductors() {
+        return conductors;
+    }
+
+    public void setConductors(List<MsBibAuthor> conductors) {
+        this.conductors = conductors;
+    }
+
+    public List<MsBibAuthor> getPerformers() {
+        return performers;
+    }
+
+    public void setPerformers(List<MsBibAuthor> performers) {
+        this.performers = performers;
+    }
+
+    public List<MsBibAuthor> getWriters() {
+        return writers;
+    }
+
+    public void setWriters(List<MsBibAuthor> writers) {
+        this.writers = writers;
+    }
+
+    public List<MsBibAuthor> getDirectors() {
+        return directors;
+    }
+
+    public void setDirectors(List<MsBibAuthor> directors) {
+        this.directors = directors;
+    }
+
+    public List<MsBibAuthor> getCompilers() {
+        return compilers;
+    }
+
+    public void setCompilers(List<MsBibAuthor> compilers) {
+        this.compilers = compilers;
+    }
+
+    public List<MsBibAuthor> getInterviewers() {
+        return interviewers;
+    }
+
+    public void setInterviewers(List<MsBibAuthor> interviewers) {
+        this.interviewers = interviewers;
+    }
+
+    public List<MsBibAuthor> getInterviewees() {
+        return interviewees;
+    }
+
+    public void setInterviewees(List<MsBibAuthor> interviewees) {
+        this.interviewees = interviewees;
+    }
+
+    public List<MsBibAuthor> getInventors() {
+        return inventors;
+    }
+
+    public void setInventors(List<MsBibAuthor> inventors) {
+        this.inventors = inventors;
+    }
+
+    public List<MsBibAuthor> getCounsels() {
+        return counsels;
+    }
+
+    public void setCounsels(List<MsBibAuthor> counsels) {
+        this.counsels = counsels;
+    }
+
+    public PageNumbers getPages() {
+        return pages;
+    }
+
+    public void setPages(PageNumbers pages) {
+        this.pages = pages;
+    }
+
+    public String getStandardNumber() {
+        return standardNumber;
+    }
+
+    public void setStandardNumber(String standardNumber) {
+        this.standardNumber = standardNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getConferenceName() {
+        return conferenceName;
+    }
+
+    public void setConferenceName(String conferenceName) {
+        this.conferenceName = conferenceName;
+    }
+
+    public String getThesisType() {
+        return thesisType;
+    }
+
+    public void setThesisType(String thesisType) {
+        this.thesisType = thesisType;
+    }
+
+    public String getInternetSiteTitle() {
+        return internetSiteTitle;
+    }
+
+    public void setInternetSiteTitle(String internetSiteTitle) {
+        this.internetSiteTitle = internetSiteTitle;
+    }
+
+    public String getDateAccessed() {
+        return dateAccessed;
+    }
+
+    public void setDateAccessed(String dateAccessed) {
+        this.dateAccessed = dateAccessed;
+    }
+
+    public String getPublicationTitle() {
+        return publicationTitle;
+    }
+
+    public void setPublicationTitle(String publicationTitle) {
+        this.publicationTitle = publicationTitle;
+    }
+
+    public String getAlbumTitle() {
+        return albumTitle;
+    }
+
+    public void setAlbumTitle(String albumTitle) {
+        this.albumTitle = albumTitle;
+    }
+
+    public String getBroadcastTitle() {
+        return broadcastTitle;
+    }
+
+    public void setBroadcastTitle(String broadcastTitle) {
+        this.broadcastTitle = broadcastTitle;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getPatentNumber() {
+        return patentNumber;
+    }
+
+    public void setPatentNumber(String patentNumber) {
+        this.patentNumber = patentNumber;
+    }
+
+    public String getJournalName() {
+        return journalName;
+    }
+
+    public void setJournalName(String journalName) {
+        this.journalName = journalName;
     }
 }

@@ -51,6 +51,16 @@ public class StringUtil {
     private static final String STRING_TABLE_DELIMITER = " : ";
     // A sentence ends with a .?!;, but not in the case of "Mr.", "Ms.", "Mrs.", "Dr.", "st.", "jr.", "co.", "inc.", and "ltd."
     private static final Pattern SPLIT_TEXT_PATTERN = Pattern.compile("(?<=[\\.!;\\?])(?<![Mm](([Rr]|[Rr][Ss])|[Ss])\\.|[Dd][Rr]\\.|[Ss][Tt]\\.|[Jj][Rr]\\.|[Cc][Oo]\\.|[Ii][Nn][Cc]\\.|[Ll][Tt][Dd]\\.)\\s+");
+    private static final String LIMIT_STRING_ELLIPSIS = "...";
+
+    // XML 1.0 valid character ranges
+    private static final char XML_CHAR_TAB = 0x9;
+    private static final char XML_CHAR_LF = 0xA;
+    private static final char XML_CHAR_CR = 0xD;
+    private static final char XML_VALID_CHAR_MIN_1 = 0x20;
+    private static final char XML_VALID_CHAR_MAX_1 = 0xD7FF;
+    private static final char XML_VALID_CHAR_MIN_2 = 0xE000;
+    private static final char XML_VALID_CHAR_MAX_2 = 0xFFFD;
 
     public static String booleanToBinaryString(boolean expression) {
         return expression ? "1" : "0";
@@ -511,8 +521,9 @@ public class StringUtil {
 
         for (int i = 0; i < in.length(); i++) {
             current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not happen.
-            if ((current == 0x9) || (current == 0xA) || (current == 0xD) || ((current >= 0x20) && (current <= 0xD7FF))
-                    || ((current >= 0xE000) && (current <= 0xFFFD))) {
+            if ((current == XML_CHAR_TAB) || (current == XML_CHAR_LF) || (current == XML_CHAR_CR) 
+                    || ((current >= XML_VALID_CHAR_MIN_1) && (current <= XML_VALID_CHAR_MAX_1))
+                    || ((current >= XML_VALID_CHAR_MIN_2) && (current <= XML_VALID_CHAR_MAX_2))) {
                 out.append(current);
             }
         }
@@ -551,7 +562,7 @@ public class StringUtil {
             return s;
         }
 
-        return s.substring(0, Math.max(0, maxLength - 3)) + "...";
+        return s.substring(0, Math.max(0, maxLength - LIMIT_STRING_ELLIPSIS.length())) + LIMIT_STRING_ELLIPSIS;
     }
 
     /// Replace non-English characters like umlauts etc. with a sensible letter or letter combination that bibtex can

@@ -31,7 +31,7 @@ public class BibTeXConverter {
         result = new BibEntry(bibTexEntryType);
 
         // add String fields
-        for (Map.Entry<String, String> field : entry.fields.entrySet()) {
+        for (Map.Entry<String, String> field : entry.getFields().entrySet()) {
             String msField = field.getKey();
             String value = field.getValue();
 
@@ -46,49 +46,49 @@ public class BibTeXConverter {
             fieldValues.put(StandardField.LANGUAGE, MSBibMapping.getLanguage(lcid));
         }
 
-        addAuthor(fieldValues, StandardField.AUTHOR, entry.authors);
-        addAuthor(fieldValues, StandardField.BOOKAUTHOR, entry.bookAuthors);
-        addAuthor(fieldValues, StandardField.EDITOR, entry.editors);
-        addAuthor(fieldValues, StandardField.TRANSLATOR, entry.translators);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "producername"), entry.producerNames);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "composer"), entry.composers);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "conductor"), entry.conductors);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "performer"), entry.performers);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "writer"), entry.writers);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "director"), entry.directors);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "compiler"), entry.compilers);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "interviewer"), entry.interviewers);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "interviewee"), entry.interviewees);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "inventor"), entry.inventors);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "counsel"), entry.counsels);
+        addAuthor(fieldValues, StandardField.AUTHOR, entry.getAuthors());
+        addAuthor(fieldValues, StandardField.BOOKAUTHOR, entry.getBookAuthors());
+        addAuthor(fieldValues, StandardField.EDITOR, entry.getEditors());
+        addAuthor(fieldValues, StandardField.TRANSLATOR, entry.getTranslators());
+        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "producername"), entry.getProducerNames());
+        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "composer"), entry.getComposers());
+        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "conductor"), entry.getConductors());
+        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "performer"), entry.getPerformers());
+        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "writer"), entry.getWriters());
+        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "director"), entry.getDirectors());
+        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "compiler"), entry.getCompilers());
+        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "interviewer"), entry.getInterviewers());
+        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "interviewee"), entry.getInterviewees());
+        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "inventor"), entry.getInventors());
+        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "counsel"), entry.getCounsels());
 
-        if (entry.pages != null) {
-            fieldValues.put(StandardField.PAGES, entry.pages.toString("--"));
+        if (entry.getPages() != null) {
+            fieldValues.put(StandardField.PAGES, entry.getPages().toString("--"));
         }
 
-        parseStandardNumber(entry.standardNumber, fieldValues);
+        parseStandardNumber(entry.getStandardNumber(), fieldValues);
 
-        if (entry.address != null) {
-            fieldValues.put(StandardField.LOCATION, entry.address);
+        if (entry.getAddress() != null) {
+            fieldValues.put(StandardField.LOCATION, entry.getAddress());
         }
         // TODO: ConferenceName is saved as booktitle when converting from MSBIB to BibTeX
-        if (entry.conferenceName != null) {
-            fieldValues.put(StandardField.ORGANIZATION, entry.conferenceName);
+        if (entry.getConferenceName() != null) {
+            fieldValues.put(StandardField.ORGANIZATION, entry.getConferenceName());
         }
 
-        if (entry.dateAccessed != null) {
-            fieldValues.put(new UnknownField(MSBIB_PREFIX + "accessed"), entry.dateAccessed);
+        if (entry.getDateAccessed() != null) {
+            fieldValues.put(new UnknownField(MSBIB_PREFIX + "accessed"), entry.getDateAccessed());
         }
 
-        if (entry.journalName != null) {
-            fieldValues.put(StandardField.JOURNAL, entry.journalName);
+        if (entry.getJournalName() != null) {
+            fieldValues.put(StandardField.JOURNAL, entry.getJournalName());
         }
-        if (entry.month != null) {
-            Optional<Month> month = Month.parse(entry.month);
+        if (entry.getMonth() != null) {
+            Optional<Month> month = Month.parse(entry.getMonth());
             month.ifPresent(result::setMonth);
         }
-        if (entry.number != null) {
-            fieldValues.put(StandardField.NUMBER, entry.number);
+        if (entry.getNumber() != null) {
+            fieldValues.put(StandardField.NUMBER, entry.getNumber());
         }
 
         // set all fields

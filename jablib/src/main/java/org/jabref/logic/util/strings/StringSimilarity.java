@@ -12,6 +12,7 @@ public class StringSimilarity {
     private final Levenshtein METRIC_DISTANCE = new Levenshtein();
     // edit distance threshold for entry title comparison
     private final int METRIC_THRESHOLD = 4;
+    private static final double WORD_CORRELATION_THRESHOLD = 0.75;
 
     /// String similarity based on Levenshtein, ignoreCase, and fixed metric threshold of 4.
     ///
@@ -105,7 +106,7 @@ public class StringSimilarity {
         int misses = 0;
         for (int i = 0; i < n; i++) {
             double corr = match.similarity(w1[i], w2[i]);
-            if (corr < 0.75) {
+            if (corr < WORD_CORRELATION_THRESHOLD) {
                 misses++;
             }
         }

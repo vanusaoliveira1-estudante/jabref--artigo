@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public class CliImportHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(CliImportHelper.class);
+    private static final String LOCATION_SEPARATOR = ",";
+    private static final int ADDRESS_INDEX = 0;
 
     /// Reads URIs as input
     ///
@@ -31,9 +33,9 @@ public class CliImportHelper {
                                                     CliPreferences cliPreferences,
                                                     boolean porcelain) {
         LOGGER.debug("Importing file from locaiton {}", location);
-        String[] data = location.split(",");
+        String[] data = location.split(LOCATION_SEPARATOR);
 
-        String address = data[0];
+        String address = data[ADDRESS_INDEX];
         Path file;
         if (address.startsWith("http://") || address.startsWith("https://") || address.startsWith("ftp://")) {
             // Download web resource to temporary file

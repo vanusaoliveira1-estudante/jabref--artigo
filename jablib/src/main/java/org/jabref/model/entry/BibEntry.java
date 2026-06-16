@@ -185,127 +185,6 @@ public class BibEntry {
         return Optional.empty();
     }
 
-    /// Map an (empty) field of a BibEntry to a field of a cross-referenced entry.
-    ///
-    /// @param targetField field name of the BibEntry
-    /// @param targetEntry type of the BibEntry
-    /// @param sourceEntry type of the cross-referenced BibEntry
-    /// @return the mapped field or null if there is no valid mapping available
-    private Optional<Field> getSourceField(Field targetField, EntryType targetEntry, EntryType sourceEntry) {
-        // 1. Sort out forbidden fields
-        if ((targetField == StandardField.IDS) ||
-                (targetField == StandardField.CROSSREF) ||
-                (targetField == StandardField.XREF) ||
-                (targetField == StandardField.ENTRYSET) ||
-                (targetField == StandardField.RELATED) ||
-                (targetField == StandardField.SORTKEY)) {
-            return Optional.empty();
-        }
-
-        // 2. Handle special field mappings
-        if (((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.InBook)) ||
-                ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.BookInBook)) ||
-                ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.SuppBook)) ||
-                ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.InBook)) ||
-                ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.BookInBook)) ||
-                ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.SuppBook))) {
-            if (targetField == StandardField.AUTHOR) {
-                return Optional.of(StandardField.AUTHOR);
-            }
-            if (targetField == StandardField.BOOKAUTHOR) {
-                return Optional.of(StandardField.AUTHOR);
-            }
-        }
-
-        if (((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.Book)) ||
-                ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.InBook)) ||
-                ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.BookInBook)) ||
-                ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.SuppBook)) ||
-                ((sourceEntry == StandardEntryType.MvCollection) && (targetEntry == StandardEntryType.Collection)) ||
-                ((sourceEntry == StandardEntryType.MvCollection) && (targetEntry == StandardEntryType.InCollection)) ||
-                ((sourceEntry == StandardEntryType.MvCollection) && (targetEntry == StandardEntryType.SuppCollection)) ||
-                ((sourceEntry == StandardEntryType.MvProceedings) && (targetEntry == StandardEntryType.Proceedings)) ||
-                ((sourceEntry == StandardEntryType.MvProceedings) && (targetEntry == StandardEntryType.InProceedings)) ||
-                ((sourceEntry == StandardEntryType.MvReference) && (targetEntry == StandardEntryType.Reference)) ||
-                ((sourceEntry == StandardEntryType.MvReference) && (targetEntry == StandardEntryType.InReference))) {
-            if (targetField == StandardField.MAINTITLE) {
-                return Optional.of(StandardField.TITLE);
-            }
-            if (targetField == StandardField.MAINSUBTITLE) {
-                return Optional.of(StandardField.SUBTITLE);
-            }
-            if (targetField == StandardField.MAINTITLEADDON) {
-                return Optional.of(StandardField.TITLEADDON);
-            }
-
-            // those fields are no more available for the same-name inheritance strategy
-            if ((targetField == StandardField.TITLE) ||
-                    (targetField == StandardField.SUBTITLE) ||
-                    (targetField == StandardField.TITLEADDON)) {
-                return Optional.empty();
-            }
-
-            // for these fields, inheritance is not allowed for the specified entry types
-            if (targetField == StandardField.SHORTTITLE) {
-                return Optional.empty();
-            }
-        }
-
-        if (((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.InBook)) ||
-                ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.BookInBook)) ||
-                ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.SuppBook)) ||
-                ((sourceEntry == StandardEntryType.Collection) && (targetEntry == StandardEntryType.InCollection)) ||
-                ((sourceEntry == StandardEntryType.Collection) && (targetEntry == StandardEntryType.SuppCollection)) ||
-                ((sourceEntry == StandardEntryType.Reference) && (targetEntry == StandardEntryType.InReference)) ||
-                ((sourceEntry == StandardEntryType.Proceedings) && (targetEntry == StandardEntryType.InProceedings))) {
-            if (targetField == StandardField.BOOKTITLE) {
-                return Optional.of(StandardField.TITLE);
-            }
-            if (targetField == StandardField.BOOKSUBTITLE) {
-                return Optional.of(StandardField.SUBTITLE);
-            }
-            if (targetField == StandardField.BOOKTITLEADDON) {
-                return Optional.of(StandardField.TITLEADDON);
-            }
-
-            // those fields are no more available for the same-name inheritance strategy
-            if ((targetField == StandardField.TITLE) ||
-                    (targetField == StandardField.SUBTITLE) ||
-                    (targetField == StandardField.TITLEADDON)) {
-                return Optional.empty();
-            }
-
-            // for these fields, inheritance is not allowed for the specified entry types
-            if (targetField == StandardField.SHORTTITLE) {
-                return Optional.empty();
-            }
-        }
-
-        if (((sourceEntry == IEEETranEntryType.Periodical) && (targetEntry == StandardEntryType.Article)) ||
-                ((sourceEntry == IEEETranEntryType.Periodical) && (targetEntry == StandardEntryType.SuppPeriodical))) {
-            if (targetField == StandardField.JOURNALTITLE) {
-                return Optional.of(StandardField.TITLE);
-            }
-            if (targetField == StandardField.JOURNALSUBTITLE) {
-                return Optional.of(StandardField.SUBTITLE);
-            }
-
-            // those fields are no more available for the same-name inheritance strategy
-            if ((targetField == StandardField.TITLE) ||
-                    (targetField == StandardField.SUBTITLE)) {
-                return Optional.empty();
-            }
-
-            // for these fields, inheritance is not allowed for the specified entry types
-            if (targetField == StandardField.SHORTTITLE) {
-                return Optional.empty();
-            }
-        }
-
-        // 3. Fallback to inherit the field with the same name.
-        return Optional.ofNullable(targetField);
-    }
-
     /// Returns the text stored in the given field of the given bibtex entry
     /// which belongs to the given database.
     ///
@@ -342,7 +221,7 @@ public class BibEntry {
             if (referred.isPresent()) {
                 EntryType sourceEntry = referred.get().type.get();
                 EntryType targetEntry = type.get();
-                Optional<Field> sourceField = getSourceField(field, targetEntry, sourceEntry);
+                Optional<Field> sourceField = CrossReferenceMapper.getSourceField(field, targetEntry, sourceEntry);
 
                 if (sourceField.isPresent()) {
                     result = getFieldOrAlias.apply(referred.get(), sourceField.get());
@@ -1179,45 +1058,7 @@ public class BibEntry {
     /// @param other                  another BibEntry from which fields are sourced from
     /// @param otherPrioritizedFields collection of Fields in which 'other' has a priority into final result
     public void mergeWith(BibEntry other, Set<Field> otherPrioritizedFields) {
-        Set<Field> thisFields = new TreeSet<>(Comparator.comparing(Field::getName));
-        Set<Field> otherFields = new TreeSet<>(Comparator.comparing(Field::getName));
-
-        thisFields.addAll(this.getFields());
-        otherFields.addAll(other.getFields());
-
-        // At the moment, "Field" interface does not provide explicit equality, so using their names instead.
-        Set<String> thisFieldsNames = thisFields.stream().map(Field::getName).collect(Collectors.toSet());
-        Set<String> otherPrioritizedFieldsNames = otherPrioritizedFields.stream().map(Field::getName).collect(Collectors.toSet());
-
-        for (Field otherField : otherFields) {
-            Optional<String> otherFieldValue = other.getField(otherField);
-            if (!thisFieldsNames.contains(otherField.getName()) ||
-                    otherPrioritizedFieldsNames.contains(otherField.getName())) {
-                // As iterator only goes through non-null fields from OTHER, otherFieldValue can never be empty
-                otherFieldValue.ifPresent(s -> this.setField(otherField, s));
-            } else {
-                switch (otherField) {
-                    case StandardField.FILE -> {
-                        List<LinkedFile> currentFiles = this.getFiles();
-                        List<LinkedFile> otherFiles = other.getFiles();
-                        List<LinkedFile> filesToAdd = otherFiles.stream()
-                                                                .filter(file -> !currentFiles.contains(file))
-                                                                .toList();
-                        if (!filesToAdd.isEmpty()) {
-                            this.addFiles(filesToAdd);
-                        }
-                    }
-                    // TODO: Merging of keywords
-                    default -> {
-                        // We keep the data of the current BibEntry
-                    }
-                }
-            }
-        }
-
-        if (this.getType().equals(DEFAULT_TYPE)) {
-            this.setType(other.getType());
-        }
+        BibEntryMerger.merge(this, other, otherPrioritizedFields);
     }
 
     public boolean isEmpty() {

@@ -27,13 +27,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StringUtilTest {
 
+    private static final int MAX_ALLOWED_LINES = 830;
+
     @Test
     void StringUtilClassIsSmall() throws IOException {
         Path path = Path.of("src", "main", "java",
                 StringUtil.class.getName().replace('.', '/') + ".java");
         int lineCount = Files.readAllLines(path, StandardCharsets.UTF_8).size();
 
-        assertTrue(lineCount <= 830, "StringUtil increased in size to " + lineCount + ". "
+        assertTrue(lineCount <= MAX_ALLOWED_LINES, "StringUtil increased in size to " + lineCount + ". "
                 + "We try to keep this class as small as possible. "
                 + "Thus think twice if you add something to StringUtil.");
     }

@@ -16,6 +16,8 @@ public class BstWidthCalculator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BstWidthCalculator.class);
 
+    private static final int MAX_ASCII_CHAR = 128;
+
     // Named constants for special character combination widths
     private static final int WIDTH_OE_LOWER = 778;
     private static final int WIDTH_OE_UPPER = 1014;
@@ -75,7 +77,7 @@ public class BstWidthCalculator {
     }
 
     public static int getCharWidth(char c) {
-        if ((c >= 0) && (c < 128)) {
+        if ((c >= 0) && (c < MAX_ASCII_CHAR)) {
             return CHAR_WIDTHS[c];
         } else {
             return 0;

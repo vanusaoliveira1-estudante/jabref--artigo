@@ -164,7 +164,16 @@ public class JabRefGUI extends Application {
 
     public void initialize() {
         WebViewStore.init();
+        IndexManager.clearOldSearchIndices();
 
+        setupMonitors();
+        setupRepositories();
+        setupServers();
+        setupGuiStateAndTheme();
+        setupServices();
+    }
+
+    private void setupMonitors() {
         DefaultFileUpdateMonitor fileUpdateMonitor = new DefaultFileUpdateMonitor();
         JabRefGUI.fileUpdateMonitor = fileUpdateMonitor;
         HeadlessExecutorService.INSTANCE.executeInterruptableTask(fileUpdateMonitor, "FileUpdateMonitor");
@@ -172,7 +181,9 @@ public class JabRefGUI extends Application {
 
         DirectoryMonitor directoryMonitor = new DirectoryMonitor();
         Injector.setModelOrService(DirectoryMonitor.class, directoryMonitor);
+    }
 
+    private void setupRepositories() {
         gitHandlerRegistry = new GitHandlerRegistry(preferences.getGitPreferences());
         Injector.setModelOrService(GitHandlerRegistry.class, gitHandlerRegistry);
 
@@ -181,18 +192,20 @@ public class JabRefGUI extends Application {
         Injector.setModelOrService(BibEntryTypesManager.class, entryTypesManager);
         Injector.setModelOrService(JournalAbbreviationRepository.class, journalAbbreviationRepository);
         Injector.setModelOrService(ProtectedTermsLoader.class, new ProtectedTermsLoader(preferences.getProtectedTermsPreferences()));
+    }
 
-        IndexManager.clearOldSearchIndices();
-
+    private void setupServers() {
         JabRefGUI.remoteListenerServerManager = new RemoteListenerServerManager();
         Injector.setModelOrService(RemoteListenerServerManager.class, JabRefGUI.remoteListenerServerManager);
 
         JabRefGUI.httpServerManager = new HttpServerManager();
         Injector.setModelOrService(HttpServerManager.class, JabRefGUI.httpServerManager);
 
-        JabRefGUI.languageServerController = new LanguageServerController(preferences, journalAbbreviationRepository, entryTypesManager);
+        JabRefGUI.languageServerController = new LanguageServerController(preferences, journalAbbreviationRepository, Injector.instantiateModelOrService(BibEntryTypesManager.class));
         Injector.setModelOrService(LanguageServerController.class, JabRefGUI.languageServerController);
+    }
 
+    private void setupGuiStateAndTheme() {
         JabRefGUI.stateManager = new JabRefGuiStateManager();
         Injector.setModelOrService(StateManager.class, stateManager);
 
@@ -207,7 +220,9 @@ public class JabRefGUI extends Application {
         JabRefGUI.countingUndoManager = new CountingUndoManager();
         Injector.setModelOrService(UndoManager.class, countingUndoManager);
         Injector.setModelOrService(CountingUndoManager.class, countingUndoManager);
+    }
 
+    private void setupServices() {
         // our Default task executor is the UITaskExecutor which can use the fx thread
         JabRefGUI.taskExecutor = new UiTaskExecutor();
         Injector.setModelOrService(TaskExecutor.class, taskExecutor);
@@ -245,7 +260,7 @@ public class JabRefGUI extends Application {
                 preferences.getGrobidPreferences(),
                 preferences.getAiPreferences(),
                 aiService.getCurrentChatModel(),
-                entryTypesManager,
+                Injector.instantiateModelOrService(BibEntryTypesManager.class),
                 dialogService
         );
         Injector.setModelOrService(SearchCitationsRelationsService.class, citationsAndRelationsSearchService);

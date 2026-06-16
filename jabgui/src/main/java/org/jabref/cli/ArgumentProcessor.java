@@ -59,40 +59,40 @@ public class ArgumentProcessor {
         }
 
         // Check if we should reset all preferences to default values:
-        if (guiCli.resetPreferences) {
+        if (guiCli.isResetPreferences()) {
             resetPreferences();
         }
 
-        if (guiCli.importPreferences != null) {
+        if (guiCli.getImportPreferences() != null) {
             importPreferences();
         }
 
-        if (guiCli.exportPreferences != null) {
+        if (guiCli.getExportPreferences() != null) {
             exportPreferences();
         }
 
-        if (guiCli.blank) {
+        if (guiCli.isBlank()) {
             uiCommands.add(new UiCommand.BlankWorkspace());
             return uiCommands;
         }
 
-        if (StringUtil.isNotBlank(guiCli.jumpToKey)) {
-            uiCommands.add(new UiCommand.SelectEntryKeys(List.of(guiCli.jumpToKey)));
+        if (StringUtil.isNotBlank(guiCli.getJumpToKey())) {
+            uiCommands.add(new UiCommand.SelectEntryKeys(List.of(guiCli.getJumpToKey())));
         }
 
-        if (guiCli.libraries != null && !guiCli.libraries.isEmpty()) {
-            if (guiCli.append) {
-                uiCommands.add(new UiCommand.AppendFilesToCurrentLibrary(guiCli.libraries));
+        if (guiCli.getLibraries() != null && !guiCli.getLibraries().isEmpty()) {
+            if (guiCli.isAppend()) {
+                uiCommands.add(new UiCommand.AppendFilesToCurrentLibrary(guiCli.getLibraries()));
             } else {
-                uiCommands.add(new UiCommand.OpenLibraries(guiCli.libraries));
+                uiCommands.add(new UiCommand.OpenLibraries(guiCli.getLibraries()));
             }
         }
 
-        if (guiCli.importToOpen != null) {
-            uiCommands.add(new UiCommand.AppendFileOrUrlToCurrentLibrary(guiCli.importToOpen));
+        if (guiCli.getImportToOpen() != null) {
+            uiCommands.add(new UiCommand.AppendFileOrUrlToCurrentLibrary(guiCli.getImportToOpen()));
         }
-        if (guiCli.importBibtex != null) {
-            uiCommands.add(new UiCommand.AppendBibTeXToCurrentLibrary(guiCli.importBibtex));
+        if (guiCli.getImportBibtex() != null) {
+            uiCommands.add(new UiCommand.AppendBibTeXToCurrentLibrary(guiCli.getImportBibtex()));
         }
         return uiCommands;
     }
@@ -110,8 +110,8 @@ public class ArgumentProcessor {
 
     private void importPreferences() {
         try {
-            System.out.println(Localization.lang("Importing preferences from '%0'.", guiCli.importPreferences));
-            preferences.importPreferences(guiCli.importPreferences);
+            System.out.println(Localization.lang("Importing preferences from '%0'.", guiCli.getImportPreferences()));
+            preferences.importPreferences(guiCli.getImportPreferences());
         } catch (JabRefException e) {
             System.err.println(e.getLocalizedMessage());
             LOGGER.error("Unable to import preferences", e);
@@ -120,8 +120,8 @@ public class ArgumentProcessor {
 
     private void exportPreferences() {
         try {
-            System.out.println(Localization.lang("Exporting preferences to '%0'.", guiCli.exportPreferences));
-            preferences.exportPreferences(guiCli.exportPreferences);
+            System.out.println(Localization.lang("Exporting preferences to '%0'.", guiCli.getExportPreferences()));
+            preferences.exportPreferences(guiCli.getExportPreferences());
         } catch (JabRefException e) {
             System.err.println(e.getLocalizedMessage());
             LOGGER.error("Unable to export preferences", e);

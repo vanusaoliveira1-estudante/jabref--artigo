@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class HTMLUnicodeConversionMaps {
 
+    private static final int BASIC_ASCII_LIMIT = 128;
+
     // most of the LaTeX commands can be read at http://en.wikibooks.org/wiki/LaTeX/Accents
     // The symbols can be seen at http://www.fileformat.info/info/unicode/char/a4/index.htm. Replace "a4" with the U+ number
     // http://detexify.kirelabs.org/classify.html and http://www.ctan.org/tex-archive/info/symbols/comprehensive/ might help to find the right LaTeX command
@@ -861,21 +863,26 @@ public class HTMLUnicodeConversionMaps {
 
     static {
         for (String[] aConversionList : CONVERSION_LIST) {
-            if (!aConversionList[2].isEmpty()) {
-                String strippedLaTeX = cleanLaTeX(aConversionList[2]);
-                if (!aConversionList[1].isEmpty()) {
-                    HTML_LATEX_CONVERSION_MAP.put("&" + aConversionList[1] + ";", aConversionList[2]);
+            String decimalNumber = aConversionList[0];
+            String htmlEntity = aConversionList[1];
+            String latexCommand = aConversionList[2];
+            
+            if (!latexCommand.isEmpty()) {
+                String strippedLaTeX = cleanLaTeX(latexCommand);
+                if (!htmlEntity.isEmpty()) {
+                    HTML_LATEX_CONVERSION_MAP.put("&" + htmlEntity + ";", latexCommand);
                     if (!strippedLaTeX.isEmpty()) {
-                        LATEX_HTML_CONVERSION_MAP.put(strippedLaTeX, "&" + aConversionList[1] + ";");
+                        LATEX_HTML_CONVERSION_MAP.put(strippedLaTeX, "&" + htmlEntity + ";");
                     }
-                } else if (!aConversionList[0].isEmpty() && !strippedLaTeX.isEmpty()) {
-                    LATEX_HTML_CONVERSION_MAP.put(strippedLaTeX, "&#" + aConversionList[0] + ";");
+                } else if (!decimalNumber.isEmpty() && !strippedLaTeX.isEmpty()) {
+                    LATEX_HTML_CONVERSION_MAP.put(strippedLaTeX, "&#" + decimalNumber + ";");
                 }
-                if (!aConversionList[0].isEmpty()) {
-                    NUMERICAL_LATEX_CONVERSION_MAP.put(Integer.decode(aConversionList[0]), aConversionList[2]);
-                    if (Integer.decode(aConversionList[0]) > 128) {
-                        String unicodeSymbol = String.valueOf(Character.toChars(Integer.decode(aConversionList[0])));
-                        UNICODE_LATEX_CONVERSION_MAP.put(unicodeSymbol, aConversionList[2]);
+                if (!decimalNumber.isEmpty()) {
+                    int codePoint = Integer.decode(decimalNumber);
+                    NUMERICAL_LATEX_CONVERSION_MAP.put(codePoint, latexCommand);
+                    if (codePoint > BASIC_ASCII_LIMIT) {
+                        String unicodeSymbol = String.valueOf(Character.toChars(codePoint));
+                        UNICODE_LATEX_CONVERSION_MAP.put(unicodeSymbol, latexCommand);
                         if (!strippedLaTeX.isEmpty()) {
                             LATEX_UNICODE_CONVERSION_MAP.put(strippedLaTeX, unicodeSymbol);
                         }
@@ -884,9 +891,11 @@ public class HTMLUnicodeConversionMaps {
             }
         }
         for (String[] anAccentList : ACCENT_LIST) {
-            ESCAPED_ACCENTS.put(Integer.decode(anAccentList[0]), anAccentList[1]);
-            UNICODE_ESCAPED_ACCENTS.put(anAccentList[1],
-                    String.valueOf(Character.toChars(Integer.decode(anAccentList[0]))));
+            String decimalNumber = anAccentList[0];
+            String accentString = anAccentList[1];
+            int codePoint = Integer.decode(decimalNumber);
+            ESCAPED_ACCENTS.put(codePoint, accentString);
+            UNICODE_ESCAPED_ACCENTS.put(accentString, String.valueOf(Character.toChars(codePoint)));
         }
         // Manually added values which are killed by cleanLaTeX
         LATEX_HTML_CONVERSION_MAP.put("$", "&dollar;");
